@@ -38,15 +38,18 @@
                                         <td class=" px-6 py-3 text-left ">{{ $article->created_at}}</td>
                                         <td class=" px-6 py-3 text-left ">
                                             {{ \carbon\carbon::parse($article->created_at)->format('Y-M-d') }}</td>
-                                        <td class=" px-6 py-3 text-center ">
+                                        <td class="flax-d px-6 py-3 text-center">
                                             <a class="bg-yellow-700 text-sm rounded-md px-3 py-3 text-white mt-3 hover:bg-yellow-400"
                                                 href="{{ route('articles.show', $article->id) }}">Show</a>
+                                            @can('edit articles')    
                                             <a class="bg-green-700 text-sm rounded-md px-3 py-3 text-white mt-3 hover:bg-green-400"
                                                 href="{{ route('articles.edit', $article->id) }}">Edit</a>
-
+                                            @endcan
+                                            @can('delete articles')
                                             <a class="bg-red-700 text-sm rounded-md px-3 py-3 text-white mt-3 hover:bg-red-400"
                                                 href ="javascript:void()"
-                                                onclick=" deleteRole({{ $article->id }})">Delete</a>
+                                                onclick=" deleteArticle({{ $article->id }})">Delete</a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach
@@ -62,12 +65,13 @@
             </div>
         </div>
     </div>
-    {{-- <x-slot name="script">
+    <x-slot name="script">
         <script type="text/javascript">
-            function deleteRole(id) {
+            function deleteArticle(id) {
+               
                 if (confirm("Are you sure you want to delete this role?")) {
                     $.ajax({
-                        url:  '{{ route("role.destroy", ":id") }}'.replace(':id', id),
+                        url:  '{{ route("articles.destroy", ":id") }}'.replace(':id', id),
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}',
@@ -75,11 +79,11 @@
                         },
                         dataType: 'json',
                         success: function(response) {
-                            window.location.href = '{{ route('role.index') }}'
+                            window.location.href = '{{ route('articles.index') }}'
                         }
                     });
                 }
             }
         </script>
-    </x-slot> --}}
+    </x-slot>
 </x-app-layout>

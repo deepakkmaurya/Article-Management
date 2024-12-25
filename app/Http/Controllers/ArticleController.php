@@ -4,9 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ArticleController extends Controller
+class ArticleController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+	{
+		return[
+			new Middleware('permission:view articles', only: ['index']),
+			new Middleware('permission:edit articles', only: ['edit']),
+			new Middleware('permission:create articles', only: ['create']),
+			new Middleware('permission:delete articles', only: ['destroy']),		
+		
+		];
+		
+	}
+    
     /**
      * Display a listing of the resource.
      */
@@ -68,6 +83,9 @@ class ArticleController extends Controller
     public function edit(Article $article)
     {
         //
+        // dd($article->id);
+        // $article = Article::find($article);
+        return view('articles.edit', compact('article'));
     }
 
     /**
@@ -76,6 +94,23 @@ class ArticleController extends Controller
     public function update(Request $request, Article $article)
     {
         //
+        // dd($request, $article);
+        $validator = Validator::make($request->all(),[
+            'title' => 'required|min:3|regex:/^[a-zA-Z0-9 _-]+$/',
+            'article' => 'required|min:3',
+        ],[
+            'name.regex' => 'The input field must contain only letters, spaces, underscores, or dashes.',
+        ]);
+
+        if($validator->passes()){
+            $article = Article::find($article->id);
+            $article->title = $request->input('title');
+            $article->article = $request->input('article');
+            $article->update();
+            return redirect()->route('articles.index')->with('success','Article update successfully');
+        }else{
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
     }
 
     /**
@@ -83,6 +118,19 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $id = $article->id;
+        $permission = Article::find($id);
+        if( $permission == null){
+            session()->flash('error','Article not found');
+            return response()->json([
+                'status' => false,
+            ]);
+        }
+
+        $permission->delete();
+        session()->flash('error','Article deleted successfully');
+        return response()->json([
+            'status' => true,
+        ]);
     }
 }

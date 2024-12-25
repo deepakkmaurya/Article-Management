@@ -33,35 +33,17 @@
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
 
-                        <!-- Password -->
-                        <div class="mt-4">
-                            <x-input-label for="password" :value="__('Password')" />
-
-                            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password"
-                                 autocomplete="new-password" />
-
-                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                        </div>
-
-                        <!-- Confirm Password -->
-                        <div class="mt-4">
-                            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-                            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                                name="password_confirmation" autocomplete="new-password" />
-
-                            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="" class="text-sm font-medium ">Select Role</label>
-                            <select name="roles" id="roles" class="border-ger-300 shadow-sm w-1/2 rounded-lg">
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
+                        <div class="grid grid-cols-4 mb-3">
+                            @if($roles->isNotEmpty())
+                            @foreach($roles as $role)    
+                            <div class="mt-3">
+                                {{--  --}}
+                                <input {{($hasRoles->contains($role->id))?'checked':''}} type="checkbox" id="role-{{$role->id}}"  name="role[]" class="rounded" value="{{$role->name }}" >
+                                <label for="role-{{$role->id}}">{{$role->name }}</label>
+                            </div>
+                            @endforeach
+                            @endif
+                            </div>
                         
                         <button class="bg-blue-700 text-sm rounded-md px-5 py-3 text-white mt-3 hover:bg-blue-400">Update</button>
                     </form>

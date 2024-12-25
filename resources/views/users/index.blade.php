@@ -21,6 +21,7 @@
                                     <td class=" px-6 py-3 text-left ">#</td>
                                     <td class=" px-6 py-3 text-left ">Name</td>
                                     <td class=" px-6 py-3 text-left ">Email</td>
+                                    <td class=" px-6 py-3 text-left ">Role</td>
                                     <td class=" px-6 py-3 text-left ">Create</td>
                                     <td class=" px-6 py-3 text-center ">Action</td>
                                 </tr>
@@ -33,6 +34,7 @@
                                         </th>
                                         <td class=" px-6 py-3 text-left ">{{ $user->name }}</td>
                                         <td class=" px-6 py-3 text-left ">{{ $user->email }}</td>
+                                        <td class=" px-6 py-3 text-left ">{{ $user->roles->pluck('name')->implode(' , ') }}</td>
                                         <td class=" px-6 py-3 text-left ">
                                             {{ \carbon\carbon::parse($user->created_at)->format('Y-M-d') }}</td>
                                         <td class=" px-6 py-3 text-center ">
